@@ -54,20 +54,35 @@ public class GuruDoc {
                 //  Note newItem might be null
                 GuruItem item = getItemFromDocItem(docItem);
                 //  Make head of dependency stack depend on this item
-                if (dependencyStack.size() != 0)
-                    dependencyStack.get(dependencyStack.size() - 1).dependencies.add(item);
+                if (dependencyStack.size() != 0) {
+                    GuruItem parentItem = dependencyStack.get(dependencyStack.size() - 1);
+                    parentItem.dependencies.add(item);
+                    //  If X depends on Y then Y is at least as important as X.
+                    if (parentItem.getPriority() > item.getPriority()) {
+                        item.setPriority(parentItem.getPriority());
+                    }
+                }
                 //  Indent
                 dependencyStack.add(item);
             }
             else {
                 //  Dedent 0 or more times
                 //  Pop dependency stack at least once
-                dependencyStack.remove(dependencyStack.size() - (dependencyStack.size() - docItem.indentionLevel));
+                int dedentSize = dependencyStack.size() - docItem.indentionLevel;
+                for (int i=0; i < dedentSize; i++) {
+                    dependencyStack.remove(dependencyStack.size() - 1);
+                }
                 //  Create an item to put on top
                 GuruItem item = getItemFromDocItem(docItem);
                 //  Make head of dependency stack depend on this item
-                if (dependencyStack.size() != 0)
-                    dependencyStack.get(dependencyStack.size() - 1).dependencies.add(item);
+                if (dependencyStack.size() != 0) {
+                    GuruItem parentItem = dependencyStack.get(dependencyStack.size() - 1);
+                    parentItem.dependencies.add(item);
+                    //  If X depends on Y then Y is at least as important as X.
+                    if (parentItem.getPriority() > item.getPriority()) {
+                        item.setPriority(parentItem.getPriority());
+                    }
+                }
                 //  Indent
                 dependencyStack.add(item);
             }
@@ -82,7 +97,7 @@ public class GuruDoc {
                 return matches[0];
             }
             else if (matches.length == 0) {
-                throw new GuruDocParsingException("Reference matches no items.", docItem.lineNumber);
+                throw new GuruDocParsingException("Reference \"" + docItem.text + "\" matches no items.", docItem.lineNumber);
             }
             else {
                 throw new GuruDocParsingException("Reference is ambiguous.", docItem.lineNumber);
@@ -100,7 +115,7 @@ public class GuruDoc {
             if (docItem.isRef)
                 continue;
 
-            GuruItem item = new GuruItem(docItem.text);
+            GuruItem item = new GuruItem(docItem.text, docItem.priority);
             model.addItem(item);
 
             declarationDocItemToGuruItemMap.put(docItem, item);

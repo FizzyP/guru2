@@ -113,6 +113,6 @@ public class Main {
 
         //  Complete the first task
         GuruItem item = topItems[0];
-
+        doc.model.removeItem(item);
     }
 }

@@ -61,7 +61,7 @@ public class GuruModel
             }
         }
 
-        return topItems.toArray( new GuruItem[topItems.size()]);
+        return topItems.toArray( new GuruItem[topItems.size()] );
     }
 
     GuruItem[] getMatches(GuruPattern pattern)

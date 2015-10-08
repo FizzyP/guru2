@@ -11,14 +11,20 @@ public class GuruItem {
     private String description;
     final HashSet<GuruItem> dependencies = new HashSet<>();
 
-    GuruItem(String description) {
+    GuruItem(String description, int priority) {
         this.description = description;
+        this.priority = priority;
     }
 
 
     int getPriority() {
         return priority;
     }
+
+    void setPriority(int p) {
+        priority = p;
+    }
+
     String getDescription() { return description; }
 
     void increasePriority(int value) {
