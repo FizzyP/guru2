@@ -27,16 +27,6 @@ public class GuruModel
         }
     }
 
-    void removeItem(GuruItem item)
-    {
-        //  Remove all dependencies on this item
-        for (GuruItem i : items) {
-            i.dependencies.remove(item);
-        }
-
-        items.remove(item);
-    }
-
     GuruItem[] getTopItems()
     {
         //  Find the top priority items

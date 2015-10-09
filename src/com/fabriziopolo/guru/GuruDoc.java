@@ -1,16 +1,20 @@
 package com.fabriziopolo.guru;
 
+import org.omg.PortableInterceptor.INACTIVE;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by fizzy on 10/4/15.
  */
 public class GuruDoc {
-    private String[] lines;
+    public String[] lines;
     private GuruDocItem[] docItems;
     GuruModel model = new GuruModel();
     private HashMap<GuruDocItem, GuruItem> declarationDocItemToGuruItemMap = new HashMap<>();
+    private HashMap<GuruItem, HashSet<Integer>> itemToLineNumbersMap = new HashMap<>();
 
 
     GuruDoc(String[] source) throws GuruDocParsingException {
@@ -26,8 +30,7 @@ public class GuruDoc {
         for (int i=0; i < lines.length; i++) {
             if (lines[i].equals(""))
                 continue;
-
-            docItemList.add(GuruDocItem.new_FromSource(lines[i], i + 1));
+            docItemList.add( GuruDocItem.new_FromSource(lines[i], i + 1) );
         }
         docItems = docItemList.toArray(new GuruDocItem[docItemList.size()]);
     }
@@ -45,6 +48,12 @@ public class GuruDoc {
         ArrayList<GuruItem> dependencyStack = new ArrayList<>();
         for (GuruDocItem docItem : docItems)
         {
+            //  Keep track of what line numbers refer to what items
+            GuruItem item = getItemFromDocItem(docItem);
+            if (docItem.isRef) {
+                itemToLineNumbersMap.get(item).add(docItem.lineNumber);
+            }
+
             //  Cannot indent more than one space at a time
             if (docItem.indentionLevel > dependencyStack.size()) {
                 throw new GuruDocParsingException("Line overindented.", docItem.lineNumber);
@@ -52,7 +61,6 @@ public class GuruDoc {
             //  Indent 1 tab
             else if (docItem.indentionLevel == dependencyStack.size()) {
                 //  Note newItem might be null
-                GuruItem item = getItemFromDocItem(docItem);
                 //  Make head of dependency stack depend on this item
                 if (dependencyStack.size() != 0) {
                     GuruItem parentItem = dependencyStack.get(dependencyStack.size() - 1);
@@ -73,7 +81,6 @@ public class GuruDoc {
                     dependencyStack.remove(dependencyStack.size() - 1);
                 }
                 //  Create an item to put on top
-                GuruItem item = getItemFromDocItem(docItem);
                 //  Make head of dependency stack depend on this item
                 if (dependencyStack.size() != 0) {
                     GuruItem parentItem = dependencyStack.get(dependencyStack.size() - 1);
@@ -119,9 +126,18 @@ public class GuruDoc {
             model.addItem(item);
 
             declarationDocItemToGuruItemMap.put(docItem, item);
+
+            HashSet<Integer> lineNumbers = new HashSet<>();
+            lineNumbers.add(docItem.lineNumber);
+            itemToLineNumbersMap.put(item, lineNumbers);
         }
     }
 
+
+    HashSet<Integer> getReferencingLineNumbers(GuruItem item)
+    {
+        return itemToLineNumbersMap.get(item);
+    }
 }
 
 

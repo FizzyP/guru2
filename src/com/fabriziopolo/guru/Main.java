@@ -2,11 +2,12 @@ package com.fabriziopolo.guru;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Main {
 
 //    public static final String sourcePath = "guru.txt";
-    public static final String sourcePath = "/Users/fizzy/Documents/guru.txt";
+    public static final String sourcePath = "/Volumes/ninja/guru.txt";
     static GuruDoc doc;
 
     public static void main(String[] args)
@@ -113,6 +114,59 @@ public class Main {
 
         //  Complete the first task
         GuruItem item = topItems[0];
-        doc.model.removeItem(item);
+        //  Find what line numbers refer to this item
+        HashSet<Integer> linesToRemove = doc.getReferencingLineNumbers(item);
+
+        //  Write out the guru.txt file leaving out linesToRemove
+        File guruTxtFile = new File(sourcePath);
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(guruTxtFile));
+            for (int i=0; i < doc.lines.length; i++) {
+                if (!linesToRemove.contains(i)) {
+                    writer.write(doc.lines[i]);
+                    writer.write("\n");
+                }
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
