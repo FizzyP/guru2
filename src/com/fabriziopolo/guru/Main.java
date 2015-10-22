@@ -12,6 +12,8 @@ public class Main {
 
     public static void main(String[] args)
     {
+        args = new String[]{"done"};
+
         //  Open "guru.txt" and try to parse it
         try {
             doc = readGuruDotTxt();
@@ -42,9 +44,11 @@ public class Main {
             switch (args[0]) {
                 case "what": {
                     recommendAllNextTasks();
+                    break;
                 }
                 case "done": {
                     completeLastRecommendedTask();
+                    break;
                 }
                 default: {
                     System.out.println("Unknown command \"" + args[0] + "\".");
@@ -110,6 +114,7 @@ public class Main {
         GuruItem[] topItems = doc.model.getTopItems();
         if (topItems.length == 0) {
             System.out.println("There are no tasks to complete.  Add new tasks to your 'guru.txt' file.");
+            return;
         }
 
         //  Complete the first task
@@ -127,6 +132,7 @@ public class Main {
                     writer.write("\n");
                 }
             }
+            writer.close();
         }
         catch (Exception e) {
             System.out.println(e.getMessage());

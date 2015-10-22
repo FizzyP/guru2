@@ -30,7 +30,7 @@ public class GuruDoc {
         for (int i=0; i < lines.length; i++) {
             if (lines[i].equals(""))
                 continue;
-            docItemList.add( GuruDocItem.new_FromSource(lines[i], i + 1) );
+            docItemList.add( GuruDocItem.new_FromSource(lines[i], i) );
         }
         docItems = docItemList.toArray(new GuruDocItem[docItemList.size()]);
     }
