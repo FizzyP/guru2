@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args)
     {
-        args = new String[]{"done"};
+//        args = new String[]{"done"};
 
         //  Open "guru.txt" and try to parse it
         try {
