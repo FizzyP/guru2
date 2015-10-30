@@ -6,12 +6,25 @@ import java.util.HashSet;
 
 public class Main {
 
-//    public static final String sourcePath = "guru.txt";
-    public static final String sourcePath = "/Volumes/ninja/guru.txt";
+//    public static final String sourcePath = "/Volumes/ninja/guru.txt";
     static GuruDoc doc;
+    static String sourcePath;
+    static String dotGuruPath;
 
     public static void main(String[] args)
     {
+        String guruPath = System.getenv("GURUPATH");
+
+        if (guruPath == null) {
+            guruPath = "";
+        }
+        else if (guruPath.charAt(guruPath.length() - 1) != '/') {
+            sourcePath = guruPath + "/";
+        }
+
+        sourcePath = guruPath + "guru.txt";
+        dotGuruPath = guruPath + ".guru";
+
 //        args = new String[]{"done"};
 
         //  Open "guru.txt" and try to parse it
@@ -24,7 +37,7 @@ public class Main {
             return;
         }
         catch (FileNotFoundException ex) {
-            System.out.println("Unable to open \"" + sourcePath + "\".  This folder doesn't contain a guru project.  Use 'guru init' to create one.");
+            System.out.println("Unable to open \"" + sourcePath + "\".  This folder doesn't contain a guru.txt file.  Create one or set the GURUPATH environment variable to the folder containing your guru.txt file.");
             failAndExit();
             return;
         }
